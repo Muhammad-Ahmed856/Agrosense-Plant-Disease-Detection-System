@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% set active_page = 'tips' %}
+{% block title %}Farming Tips{% endblock %}
+{% block page_title %}💡 Farming Tips & Guides{% endblock %}
+{% block extra_css %}
+<style>
+.tips-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;margin-top:20px}
+.tip-card{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:all 0.22s;box-shadow:var(--shadow)}
+.tip-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-md);border-color:var(--g4)}
+.tip-card-top{padding:18px 20px 14px;border-bottom:1px solid var(--border)}
+.tip-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin-bottom:10px}
+.tip-icon.spray{background:var(--sky-lt);border:1px solid #bfdbfe}
+.tip-icon.disease{background:#fff1f2;border:1px solid #fecdd3}
+.tip-icon.general{background:var(--g9);border:1px solid var(--g8)}
+.tip-title{font-family:'Playfair Display',serif;font-size:0.95rem;font-weight:700;color:var(--text);margin-bottom:6px}
+.tip-content{font-size:0.8rem;color:var(--sub);line-height:1.7}
+.tip-card-foot{padding:10px 20px;display:flex;align-items:center;justify-content:space-between}
+.filter-bar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.filter-btn{padding:6px 14px;border-radius:20px;font-family:'DM Sans',sans-serif;font-size:0.76rem;font-weight:700;cursor:pointer;border:1.5px solid var(--border);background:transparent;color:var(--sub);transition:all 0.18s}
+.filter-btn:hover,.filter-btn.active{background:var(--g3);color:#fff;border-color:var(--g3)}
+.add-tip-panel{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:20px;border-left:4px solid var(--g3);display:none;box-shadow:var(--shadow)}
+.add-tip-panel.show{display:block}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+</style>
+{% endblock %}
+{% block content %}
+<div class="section-heading">
+  <h2>💡 Farming Tips & Guides</h2>
+  <p>Expert advice on disease prevention, spray timing, and crop management</p>
+</div>
+
+{% if role == 'admin' %}
+<div style="margin-bottom:16px">
+  <button class="btn btn-green" onclick="document.getElementById('addPanel').classList.toggle('show')">+ Add New Tip</button>
+</div>
+<div class="add-tip-panel" id="addPanel">
+  <h3 style="font-family:'Playfair Display',serif;margin-bottom:14px;color:var(--text)">Add New Tip</h3>
+  <div class="alert alert-error" id="tipErr" style="display:none"></div>
+  <div class="form-group"><label>TITLE</label><input type="text" id="tipTitle" placeholder="e.g. How to Prevent Late Blight"/></div>
+  <div class="row2">
+    <div class="form-group"><label>CATEGORY</label>
+      <select id="tipCat">
+        <option value="general">🌾 General</option>
+        <option value="spray">💧 Spray & Pesticide</option>
+        <option value="disease">🔬 Disease Management</option>
+      </select>
+    </div>
+  </div>
+  <div class="form-group"><label>CONTENT</label><textarea id="tipContent" rows="4" placeholder="Write your tip here…"></textarea></div>
+  <button class="btn btn-green" onclick="addTip()">Save Tip</button>
+  <button class="btn btn-outline" onclick="document.getElementById('addPanel').classList.remove('show')" style="margin-left:8px">Cancel</button>
+</div>
+{% endif %}
+
+<div class="filter-bar">
+  <button class="filter-btn active" onclick="filterTips('all',this)">All Tips</button>
+  <button class="filter-btn" onclick="filterTips('general',this)">🌾 General</button>
+  <button class="filter-btn" onclick="filterTips('spray',this)">💧 Spray</button>
+  <button class="filter-btn" onclick="filterTips('disease',this)">🔬 Disease</button>
+</div>
+
+<div class="tips-grid" id="tipsGrid">
+  {% for tip in tips %}
+  <div class="tip-card" data-cat="{{ tip.category }}" id="tip-{{ tip.id }}">
+    <div class="tip-card-top">
+      <div class="tip-icon {{ tip.category }}">
+        {% if tip.category == 'spray' %}💧
+        {% elif tip.category == 'disease' %}🔬
+        {% else %}🌾{% endif %}
+      </div>
+      <div class="tip-title">{{ tip.title }}</div>
+      <div class="tip-content">{{ tip.content }}</div>
+    </div>
+    <div class="tip-card-foot">
+      <span class="pill {% if tip.category == 'spray' %}pill-blue{% elif tip.category == 'disease' %}pill-red{% else %}pill-green{% endif %}">
+        {{ tip.category.title() }}
+      </span>
+      <span style="font-size:0.65rem;color:var(--faint)">{{ tip.created[:10] }}</span>
+      {% if role == 'admin' %}
+      <button class="btn btn-danger" style="padding:4px 10px;font-size:0.72rem" onclick="deleteTip({{ tip.id }})">🗑</button>
+      {% endif %}
+    </div>
+  </div>
+  {% else %}
+  <div style="grid-column:1/-1;text-align:center;padding:48px;color:var(--faint)">
+    <div style="font-size:2.5rem;margin-bottom:10px">💡</div>
+    <p>No tips yet. {% if role == 'admin' %}Add the first tip above!{% endif %}</p>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+function filterTips(cat, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.tip-card').forEach(c=>{
+    c.style.display = (cat==='all'||c.dataset.cat===cat) ? 'block' : 'none';
+  });
+}
+async function addTip() {
+  const t=document.getElementById('tipTitle').value.trim();
+  const c=document.getElementById('tipContent').value.trim();
+  const cat=document.getElementById('tipCat').value;
+  const err=document.getElementById('tipErr');
+  err.style.display='none';
+  if(!t||!c){err.textContent='Title and content are required.';err.style.display='block';return;}
+  const r=await fetch('/api/tips',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({title:t,content:c,category:cat})});
+  if((await r.json()).success) location.reload();
+}
+async function deleteTip(id) {
+  if(!confirm('Delete this tip?')) return;
+  const r=await fetch(`/api/tips/${id}`,{method:'DELETE'});
+  if((await r.json()).success){
+    const el=document.getElementById(`tip-${id}`);
+    el.style.transition='all 0.3s';el.style.opacity='0';el.style.transform='scale(0.9)';
+    setTimeout(()=>el.remove(),300);
+  }
+}
+</script>
+{% endblock %}

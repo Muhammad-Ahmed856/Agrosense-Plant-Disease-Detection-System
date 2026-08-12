@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% set active_page = 'profile' %}
+{% block title %}My Profile{% endblock %}
+{% block page_title %}👤 My Profile{% endblock %}
+{% block extra_css %}
+<style>
+.profile-grid{display:grid;grid-template-columns:300px 1fr;gap:20px;align-items:start}
+.profile-card{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:var(--shadow)}
+.profile-hero{background:linear-gradient(135deg,var(--g1),var(--g3));padding:32px 24px;text-align:center}
+.avatar{width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,0.2);border:3px solid rgba(255,255,255,0.4);display:flex;align-items:center;justify-content:center;font-size:2.2rem;margin:0 auto 12px}
+.profile-name{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:#fff;margin-bottom:3px}
+.profile-username{font-size:0.76rem;color:rgba(255,255,255,0.65)}
+.profile-role{display:inline-block;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);border-radius:20px;padding:3px 12px;font-size:0.65rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#fff;margin-top:6px}
+.profile-stats{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--border)}
+.p-stat{padding:14px 16px;text-align:center;border-right:1px solid var(--border)}
+.p-stat:last-child{border-right:none}
+.p-stat-num{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;color:var(--g3)}
+.p-stat-lbl{font-size:0.62rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--faint);margin-top:2px}
+.profile-info{padding:16px 20px;border-top:1px solid var(--border)}
+.pi-row{display:flex;align-items:center;gap:8px;padding:6px 0;font-size:0.82rem;color:var(--sub);border-bottom:1px solid rgba(0,0,0,0.04)}
+.pi-row:last-child{border-bottom:none}
+.pi-icon{font-size:0.9rem;width:18px;flex-shrink:0}
+.edit-panel{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px;box-shadow:var(--shadow)}
+.edit-panel h3{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;color:var(--text);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pw-panel{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px;margin-top:18px;box-shadow:var(--shadow)}
+</style>
+{% endblock %}
+{% block content %}
+<div class="section-heading">
+  <h2>My Profile</h2>
+  <p>Manage your account information and change your password</p>
+</div>
+
+<div class="profile-grid">
+  <!-- Left: profile card -->
+  <div>
+    <div class="profile-card">
+      <div class="profile-hero">
+        <div class="avatar">👤</div>
+        <div class="profile-name">{{ user.full_name or user.username }}</div>
+        <div class="profile-username">@{{ user.username }}</div>
+        <div class="profile-role">{{ user.role }}</div>
+      </div>
+      <div class="profile-stats">
+        <div class="p-stat">
+          <div class="p-stat-num">{{ scan_count }}</div>
+          <div class="p-stat-lbl">Scans Done</div>
+        </div>
+        <div class="p-stat">
+          <div class="p-stat-num">{{ total_count }}</div>
+          <div class="p-stat-lbl">Total Uploads</div>
+        </div>
+      </div>
+      <div class="profile-info">
+        <div class="pi-row"><span class="pi-icon">📧</span> {{ user.email }}</div>
+        <div class="pi-row"><span class="pi-icon">📱</span> {{ user.phone or 'Not set' }}</div>
+        <div class="pi-row"><span class="pi-icon">🏙️</span> {{ user.city or 'Not set' }}</div>
+        <div class="pi-row"><span class="pi-icon">📅</span> Joined {{ user.created[:10] }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right: edit forms -->
+  <div>
+    <div class="edit-panel">
+      <h3>Edit Profile Information</h3>
+      <div class="alert alert-success" id="profileOk" style="display:none">Profile updated successfully!</div>
+      <div class="alert alert-error" id="profileErr" style="display:none"></div>
+      <div class="row2">
+        <div class="form-group"><label>FULL NAME</label><input type="text" id="full_name" value="{{ user.full_name or '' }}" placeholder="Your full name"/></div>
+        <div class="form-group"><label>PHONE</label><input type="text" id="phone" value="{{ user.phone or '' }}" placeholder="03xx-xxxxxxx"/></div>
+      </div>
+      <div class="form-group"><label>CITY</label><input type="text" id="city" value="{{ user.city or '' }}" placeholder="e.g. Lahore"/></div>
+      <button class="btn btn-green" onclick="saveProfile()">💾 Save Changes</button>
+    </div>
+
+    <div class="pw-panel">
+      <h3>Change Password</h3>
+      <div class="alert alert-success" id="pwOk" style="display:none">Password changed successfully!</div>
+      <div class="alert alert-error" id="pwErr" style="display:none"></div>
+      <div class="form-group"><label>CURRENT PASSWORD</label><input type="password" id="old_pw" placeholder="Enter current password"/></div>
+      <div class="row2">
+        <div class="form-group"><label>NEW PASSWORD</label><input type="password" id="new_pw" placeholder="Min 6 characters"/></div>
+        <div class="form-group"><label>CONFIRM NEW PASSWORD</label><input type="password" id="confirm_pw" placeholder="Repeat new password"/></div>
+      </div>
+      <button class="btn btn-green" onclick="changePw()">🔑 Change Password</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+async function saveProfile() {
+  const ok=document.getElementById('profileOk');
+  const err=document.getElementById('profileErr');
+  ok.style.display='none'; err.style.display='none';
+  const r=await fetch('/api/profile',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({full_name:document.getElementById('full_name').value.trim(),
+      phone:document.getElementById('phone').value.trim(),
+      city:document.getElementById('city').value.trim()})});
+  const d=await r.json();
+  if(d.success){ok.style.display='block';setTimeout(()=>location.reload(),1200);}
+  else{err.textContent=d.error||'Update failed.';err.style.display='block';}
+}
+async function changePw() {
+  const ok=document.getElementById('pwOk');
+  const err=document.getElementById('pwErr');
+  ok.style.display='none'; err.style.display='none';
+  const np=document.getElementById('new_pw').value;
+  const cp=document.getElementById('confirm_pw').value;
+  if(np!==cp){err.textContent='New passwords do not match.';err.style.display='block';return;}
+  const r=await fetch('/api/change-password',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({old_password:document.getElementById('old_pw').value,new_password:np})});
+  const d=await r.json();
+  if(d.success){ok.style.display='block';document.getElementById('old_pw').value='';document.getElementById('new_pw').value='';document.getElementById('confirm_pw').value='';}
+  else{err.textContent=d.error||'Failed.';err.style.display='block';}
+}
+</script>
+{% endblock %}

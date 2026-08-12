@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% set active_page = 'about' %}
+{% block title %}About AgroSense{% endblock %}
+{% block page_title %}ℹ️ About AgroSense{% endblock %}
+{% block extra_css %}
+<style>
+.about-hero{background:linear-gradient(135deg,var(--g1),var(--g3));border-radius:18px;padding:40px 36px;margin-bottom:24px;display:grid;grid-template-columns:1fr auto;gap:20px;align-items:center}
+.about-hero h2{font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;color:#fff;line-height:1.2;margin-bottom:8px}
+.about-hero p{font-size:0.9rem;color:rgba(255,255,255,0.75);line-height:1.7;max-width:500px}
+.about-hero-stats{display:flex;flex-direction:column;gap:10px;text-align:center}
+.hs{background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:12px;padding:14px 20px}
+.hs-num{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;color:#a8e06b}
+.hs-lbl{font-size:0.62rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.55)}
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+.about-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;box-shadow:var(--shadow)}
+.about-card h3{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.about-card p,.about-card li{font-size:0.82rem;color:var(--sub);line-height:1.7}
+.about-card ul{padding-left:16px}
+.about-card li{margin-bottom:5px}
+.stage-list{display:flex;flex-direction:column;gap:10px}
+.stage{display:flex;align-items:flex-start;gap:12px;padding:12px;background:var(--g9);border-radius:10px;border:1px solid var(--border)}
+.stage-num{width:28px;height:28px;border-radius:50%;background:var(--g2);color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.78rem;font-weight:700;flex-shrink:0}
+.stage-body h4{font-size:0.82rem;font-weight:700;color:var(--text);margin-bottom:2px}
+.stage-body p{font-size:0.76rem;color:var(--sub)}
+.crop-table-wrap{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:var(--shadow)}
+.team-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;text-align:center;box-shadow:var(--shadow)}
+.team-avatar{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--g2),var(--g4));display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin:0 auto 10px}
+.team-name{font-weight:700;color:var(--text);font-size:0.88rem}
+.team-role{font-size:0.72rem;color:var(--sub);margin-top:2px}
+.team-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px}
+</style>
+{% endblock %}
+{% block content %}
+<!-- Hero -->
+<div class="about-hero">
+  <div>
+    <h2>AgroSense<br/>AI Crop Intelligence</h2>
+    <p>An AI-powered plant disease detection platform built for Pakistani farmers — combining deep learning and weather data to protect crops and improve yields.</p>
+  </div>
+  <div class="about-hero-stats">
+    <div class="hs"><div class="hs-num">38</div><div class="hs-lbl">Disease Classes</div></div>
+    <div class="hs"><div class="hs-num">87K</div><div class="hs-lbl">Images Trained</div></div>
+    <div class="hs"><div class="hs-num">14</div><div class="hs-lbl">Crop Types</div></div>
+  </div>
+</div>
+
+<!-- How it works + Model -->
+<div class="about-grid">
+  <div class="about-card">
+    <h3>🔬 How Disease Detection Works</h3>
+    <div class="stage-list">
+      <div class="stage"><div class="stage-num">0</div><div class="stage-body"><h4>Color Heuristic (Fast Gate)</h4><p>Checks if the image contains plant-like colors — green, yellow, brown, or red pixels typical of leaves.</p></div></div>
+      <div class="stage"><div class="stage-num">1</div><div class="stage-body"><h4>MobileNetV2 Semantic Check</h4><p>Pre-trained on ImageNet 1000 classes — identifies plant/vegetable/flower content. Image passes if Stage 0 OR Stage 1 succeeds.</p></div></div>
+      <div class="stage"><div class="stage-num">2</div><div class="stage-body"><h4>CNN Disease Classifier</h4><p>Our custom EfficientNet/CNN trained on 87K PlantVillage images predicts disease with confidence score.</p></div></div>
+    </div>
+  </div>
+  <div class="about-card">
+    <h3>🧠 Model Architecture</h3>
+    <p style="margin-bottom:10px">The disease classifier uses a deep Convolutional Neural Network:</p>
+    <ul>
+      <li>Input: 128×128×3 RGB images</li>
+      <li>4 Conv blocks with BatchNormalization</li>
+      <li>Data augmentation (flip, rotate, zoom)</li>
+      <li>Global Average Pooling → Dense layers</li>
+      <li>38-class Softmax output</li>
+      <li>Trained with Adam optimizer, EarlyStopping</li>
+      <li>Achieves &gt;90% validation accuracy</li>
+    </ul>
+    <p style="margin-top:10px"><strong>Dataset:</strong> PlantVillage (Penn State University) — 87,000 leaf images across 38 disease categories.</p>
+  </div>
+</div>
+
+<!-- Crops table -->
+<div class="section-heading" style="margin-top:8px"><h2 style="font-size:1.2rem">🌾 Supported Crops & Diseases</h2></div>
+<div class="crop-table-wrap" style="margin-bottom:24px">
+  <table>
+    <thead><tr><th>Crop</th><th>Diseases Covered</th><th>Healthy Class</th></tr></thead>
+    <tbody>
+      <tr><td><strong>🍅 Tomato</strong></td><td>Bacterial Spot, Early Blight, Late Blight, Leaf Mold, Septoria, Spider Mites, Target Spot, Yellow Leaf Curl, Mosaic Virus</td><td>✅ Yes</td></tr>
+      <tr><td><strong>🥔 Potato</strong></td><td>Early Blight, Late Blight</td><td>✅ Yes</td></tr>
+      <tr><td><strong>🌽 Corn / Maize</strong></td><td>Gray Leaf Spot, Common Rust, Northern Leaf Blight</td><td>✅ Yes</td></tr>
+      <tr><td><strong>🍎 Apple</strong></td><td>Apple Scab, Black Rot, Cedar Apple Rust</td><td>✅ Yes</td></tr>
+      <tr><td><strong>🍇 Grape</strong></td><td>Black Rot, Esca (Black Measles), Leaf Blight</td><td>✅ Yes</td></tr>
+      <tr><td><strong>🍑 Peach</strong></td><td>Bacterial Spot</td><td>✅ Yes</td></tr>
+      <tr><td><strong>🫑 Bell Pepper</strong></td><td>Bacterial Spot</td><td>✅ Yes</td></tr>
+      <tr><td><strong>🍓 Strawberry</strong></td><td>Leaf Scorch</td><td>✅ Yes</td></tr>
+      <tr><td><strong>🍊 Orange</strong></td><td>Huanglongbing (Citrus Greening)</td><td>—</td></tr>
+      <tr><td><strong>🍒 Cherry</strong></td><td>Powdery Mildew</td><td>✅ Yes</td></tr>
+      <tr><td><strong>🫐 Blueberry, Raspberry, Soybean, Squash</strong></td><td>Healthy only / Powdery Mildew</td><td>✅ Yes</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Tech stack -->
+<div class="about-grid">
+  <div class="about-card">
+    <h3>🛠️ Technology Stack</h3>
+    <ul>
+      <li><strong>Backend:</strong> Python 3.11, Flask 3.x</li>
+      <li><strong>AI/ML:</strong> TensorFlow 2.x, Keras, MobileNetV2</li>
+      <li><strong>Database:</strong> SQLite (via Python sqlite3)</li>
+      <li><strong>Image Processing:</strong> Pillow, NumPy, OpenCV</li>
+      <li><strong>Weather API:</strong> Open-Meteo (free, no key needed)</li>
+      <li><strong>Frontend:</strong> Vanilla HTML/CSS/JS, Playfair Display + DM Sans</li>
+      <li><strong>Dataset:</strong> PlantVillage (Penn State, Kaggle)</li>
+    </ul>
+  </div>
+  <div class="about-card">
+    <h3>🌤️ Weather Advisory</h3>
+    <p style="margin-bottom:10px">The spray advisory uses real-time weather from <strong>Open-Meteo</strong> — a free, open-source weather API with no registration required.</p>
+    <p style="margin-bottom:10px">Factors evaluated using <strong>IPM (Integrated Pest Management)</strong> guidelines:</p>
+    <ul>
+      <li>🌡️ Temperature (ideal 15–30°C)</li>
+      <li>💧 Humidity (ideal 40–90%)</li>
+      <li>🌬️ Wind speed (&lt;15 km/h = safe)</li>
+      <li>🌧️ Precipitation (any rain = postpone)</li>
+    </ul>
+  </div>
+</div>
+
+<!-- Project info -->
+<div class="about-card" style="margin-bottom:16px">
+  <h3>🏫 Project Information</h3>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:4px">
+    <div><div style="font-size:0.62rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--faint);margin-bottom:4px">Institution</div><div style="font-size:0.85rem;font-weight:600;color:var(--text)">Superior University, Lahore</div></div>
+    <div><div style="font-size:0.62rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--faint);margin-bottom:4px">Competition</div><div style="font-size:0.85rem;font-weight:600;color:var(--text)">Kirothon 2026 — AWS Community Pakistan</div></div>
+    <div><div style="font-size:0.62rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--faint);margin-bottom:4px">Version</div><div style="font-size:0.85rem;font-weight:600;color:var(--text)">AgroSense v2.1</div></div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+{% endblock %}

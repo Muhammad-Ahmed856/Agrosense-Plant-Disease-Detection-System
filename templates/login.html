@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>AgroSense — Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --g1: #14380f; --g2: #1e5218; --g3: #2a6e20; --g4: #3d8a2e;
+  --g5: #52a83c; --g6: #72c455; --g7: #9dda80; --g8: #c8edba;
+  --g9: #e4f5db; --g10: #f2fbed;
+  --bg: #edf5e9; --card: #fff;
+  --border: #c4ddb8; --blight: #daeece;
+  --text: #142e0d; --sub: #3a6030; --faint: #6e9960; --muted: #9bbf8e;
+  --gold: #c08a18; --red: #b91c1c; --orange: #c0520f; --sky: #1a6fa4; --sky-lt: #e8f4fd;
+  --shadow: 0 2px 10px rgba(20,56,15,0.10); --shadow-md: 0 6px 24px rgba(20,56,15,0.14);
+}
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text);
+  min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+.login-wrap {
+  display: grid; grid-template-columns: 1fr 1fr; min-height: 560px; max-width: 1000px; width: 100%;
+  border-radius: 18px; overflow: hidden; box-shadow: var(--shadow-md); background: var(--card);
+}
+/* Left hero panel */
+.hero-panel {
+  background: linear-gradient(160deg, var(--g1) 0%, var(--g2) 50%, var(--g3) 100%);
+  padding: 48px 40px; display: flex; flex-direction: column; justify-content: space-between;
+  position: relative; overflow: hidden;
+}
+.hero-panel::before {
+  content: ''; position: absolute; top: -60px; right: -60px; width: 240px; height: 240px;
+  border-radius: 50%; background: rgba(255,255,255,0.05);
+}
+.hero-panel::after {
+  content: ''; position: absolute; bottom: -40px; left: -40px; width: 180px; height: 180px;
+  border-radius: 50%; background: rgba(255,255,255,0.04);
+}
+.brand-mark { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.brand-icon {
+  width: 44px; height: 44px; background: rgba(255,255,255,0.15); border-radius: 12px;
+  display: flex; align-items: center; justify-content: center; font-size: 20px; backdrop-filter: blur(4px);
+}
+.brand-title {
+  font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700; color: #fff;
+}
+.brand-title span { color: var(--g7); }
+.hero-tagline {
+  font-size: 0.7rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+  color: rgba(255,255,255,0.45); margin-left: 54px;
+}
+.hero-main { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 20px 0; }
+.hero-main h2 {
+  font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; color: #fff;
+  line-height: 1.2; margin-bottom: 12px;
+}
+.hero-main h2 em { font-style: italic; color: var(--g7); }
+.hero-main p { font-size: 0.88rem; color: rgba(255,255,255,0.7); line-height: 1.7; margin-bottom: 10px; }
+.hero-stats { display: flex; gap: 24px; }
+.hs { text-align: center; }
+.hs-num {
+  font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 700; color: var(--g7);
+}
+.hs-lbl {
+  font-size: 0.62rem; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+}
+/* Right form panel */
+.form-panel {
+  background: var(--card); padding: 48px 40px; display: flex; flex-direction: column; justify-content: center;
+}
+.form-panel h3 {
+  font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700; color: var(--text);
+  margin-bottom: 6px;
+}
+.form-panel .sub { font-size: 0.82rem; color: var(--sub); margin-bottom: 28px; }
+.role-tabs {
+  display: flex; gap: 6px; margin-bottom: 24px; background: var(--g10); border-radius: 12px; padding: 5px;
+}
+.role-tab {
+  flex: 1; padding: 9px; border: none; background: transparent; border-radius: 8px;
+  font-family: 'DM Sans', sans-serif; font-size: 0.82rem; font-weight: 600; color: var(--sub);
+  cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 5px;
+}
+.role-tab.active { background: var(--card); color: var(--g3); box-shadow: 0 2px 8px rgba(20,56,15,0.1); }
+.form-group { margin-bottom: 14px; }
+.form-group label {
+  display: block; font-size: 0.72rem; font-weight: 700; color: var(--sub); margin-bottom: 5px;
+  letter-spacing: 0.5px;
+}
+.form-group input {
+  width: 100%; padding: 11px 14px; border: 1.5px solid var(--border); border-radius: 10px;
+  font-family: 'DM Sans', sans-serif; font-size: 0.88rem; color: var(--text); outline: none;
+  transition: border-color 0.2s; background: var(--g10);
+}
+.form-group input:focus { border-color: var(--g4); background: var(--card); }
+.form-group input::placeholder { color: var(--faint); }
+.btn-login {
+  width: 100%; padding: 13px; background: linear-gradient(135deg, var(--g3), var(--g5));
+  border: none; border-radius: 11px; font-family: 'DM Sans', sans-serif; font-size: 0.95rem;
+  font-weight: 700; color: #fff; cursor: pointer; transition: all 0.25s; margin-top: 4px;
+  box-shadow: 0 4px 14px rgba(42,110,32,0.3);
+}
+.btn-login:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
+.btn-login:active { transform: translateY(0); }
+.form-footer {
+  text-align: center; margin-top: 16px; font-size: 0.8rem; color: var(--sub);
+}
+.form-footer a { color: var(--g3); font-weight: 600; text-decoration: none; }
+.form-footer a:hover { text-decoration: underline; }
+.error-msg {
+  background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 10px 14px;
+  font-size: 0.8rem; color: var(--red); margin-bottom: 14px; display: none;
+}
+.error-msg.show { display: block; }
+@media(max-width: 700px) {
+  .login-wrap { grid-template-columns: 1fr; }
+  .hero-panel { display: none; }
+  .form-panel { padding: 40px 24px; }
+}
+</style>
+</head>
+<body>
+<div class="login-wrap">
+  <div class="hero-panel">
+    <div>
+      <div class="brand-mark">
+        <div class="brand-icon">🌱</div>
+        <div class="brand-title">Agro<span>Sense</span></div>
+      </div>
+      <div class="hero-tagline">AI Crop Intelligence</div>
+    </div>
+    <div class="hero-main">
+      <h2>Protect Your Harvest with <em>AI</em></h2>
+      <p>Upload a leaf photo for instant disease detection — built for Pakistani farmers.</p>
+    </div>
+    <div class="hero-stats">
+      <div class="hs"><div class="hs-num">38</div><div class="hs-lbl">Diseases</div></div>
+      <div class="hs"><div class="hs-num">87K</div><div class="hs-lbl">Trained</div></div>
+      <div class="hs"><div class="hs-num">14</div><div class="hs-lbl">Crops</div></div>
+    </div>
+  </div>
+  <div class="form-panel">
+    <h3>Welcome Back</h3>
+    <p class="sub">Sign in to access your AgroSense dashboard</p>
+    <div class="role-tabs">
+      <button class="role-tab active" onclick="setRole('farmer',this)">🌾 Farmer Login</button>
+      <button class="role-tab" onclick="setRole('admin',this)">🔐 Admin Login</button>
+    </div>
+    <div class="error-msg" id="errMsg"></div>
+    <div class="form-group">
+      <label>USERNAME</label>
+      <input type="text" id="username" placeholder="Enter your username" autocomplete="username"/>
+    </div>
+    <div class="form-group">
+      <label>PASSWORD</label>
+      <input type="password" id="password" placeholder="Enter your password" autocomplete="current-password"/>
+    </div>
+    <button class="btn-login" onclick="doLogin()">Sign In →</button>
+    <div class="form-footer" id="regLink">
+      Don't have an account? <a href="/register">Register as Farmer</a>
+    </div>
+  </div>
+</div>
+<script>
+let selectedRole = 'farmer';
+function setRole(r, btn) {
+  selectedRole = r;
+  document.querySelectorAll('.role-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('regLink').style.display = r === 'farmer' ? 'block' : 'none';
+}
+async function doLogin() {
+  const username = document.getElementById('username').value.trim();
+  const password = document.getElementById('password').value;
+  const err = document.getElementById('errMsg');
+  err.classList.remove('show');
+  if (!username || !password) { err.textContent = 'Please fill in all fields.'; err.classList.add('show'); return; }
+  const btn = document.querySelector('.btn-login');
+  btn.textContent = 'Signing in…'; btn.disabled = true;
+  try {
+    const res  = await fetch('/api/login', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({username,password}) });
+    const data = await res.json();
+    if (data.success) {
+      window.location.href = data.role === 'admin' ? '/admin' : '/dashboard';
+    } else {
+      err.textContent = data.error || 'Login failed.'; err.classList.add('show');
+    }
+  } catch(e) { err.textContent = 'Network error. Try again.'; err.classList.add('show'); }
+  btn.textContent = 'Sign In →'; btn.disabled = false;
+}
+document.addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+</script>
+</body>
+</html>

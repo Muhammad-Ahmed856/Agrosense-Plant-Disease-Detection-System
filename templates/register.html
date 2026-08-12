@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>AgroSense — Register</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --g1: #14380f; --g2: #1e5218; --g3: #2a6e20; --g4: #3d8a2e;
+  --g5: #52a83c; --g6: #72c455; --g7: #9dda80; --g8: #c8edba;
+  --g9: #e4f5db; --g10: #f2fbed;
+  --bg: #edf5e9; --card: #fff;
+  --border: #c4ddb8; --blight: #daeece;
+  --text: #142e0d; --sub: #3a6030; --faint: #6e9960; --muted: #9bbf8e;
+  --gold: #c08a18; --red: #b91c1c; --orange: #c0520f; --sky: #1a6fa4; --sky-lt: #e8f4fd;
+  --shadow: 0 2px 10px rgba(20,56,15,0.10); --shadow-md: 0 6px 24px rgba(20,56,15,0.14);
+}
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text);
+  min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px;
+}
+.wrap {
+  background: var(--card); border-radius: 18px; box-shadow: var(--shadow-md); padding: 40px;
+  max-width: 560px; width: 100%; border: 1px solid var(--border);
+}
+.brand { display: flex; align-items: center; gap: 10px; margin-bottom: 24px; }
+.brand-icon {
+  width: 38px; height: 38px; background: linear-gradient(135deg, var(--g3), var(--g5));
+  border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px;
+}
+.brand-name {
+  font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 700; color: var(--text);
+}
+.brand-name span { color: var(--g3); }
+h2 {
+  font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 700; color: var(--text);
+  margin-bottom: 4px;
+}
+.sub { font-size: 0.82rem; color: var(--sub); margin-bottom: 24px; }
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.form-group { margin-bottom: 14px; }
+.form-group label {
+  display: block; font-size: 0.72rem; font-weight: 700; color: var(--sub); margin-bottom: 5px;
+  letter-spacing: 0.5px;
+}
+.form-group input {
+  width: 100%; padding: 11px 14px; border: 1.5px solid var(--border); border-radius: 10px;
+  font-family: 'DM Sans', sans-serif; font-size: 0.88rem; color: var(--text); outline: none;
+  transition: border-color 0.2s; background: var(--g10);
+}
+.form-group input:focus { border-color: var(--g4); background: var(--card); }
+.form-group input::placeholder { color: var(--faint); }
+.optional { font-size: 0.65rem; font-weight: 400; color: var(--faint); margin-left: 4px; }
+.btn {
+  width: 100%; padding: 13px; background: linear-gradient(135deg, var(--g3), var(--g5));
+  border: none; border-radius: 11px; font-family: 'DM Sans', sans-serif; font-size: 0.95rem;
+  font-weight: 700; color: #fff; cursor: pointer; transition: all 0.25s;
+  box-shadow: 0 4px 14px rgba(42,110,32,0.3);
+}
+.btn:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
+.footer-link {
+  text-align: center; margin-top: 16px; font-size: 0.8rem; color: var(--sub);
+}
+.footer-link a { color: var(--g3); font-weight: 600; text-decoration: none; }
+.footer-link a:hover { text-decoration: underline; }
+.error-msg {
+  background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 10px 14px;
+  font-size: 0.8rem; color: var(--red); margin-bottom: 14px; display: none;
+}
+.error-msg.show { display: block; }
+.success-msg {
+  background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 10px 14px;
+  font-size: 0.8rem; color: #166534; margin-bottom: 14px; display: none;
+}
+.success-msg.show { display: block; }
+@media(max-width: 600px) {
+  .wrap { padding: 24px; }
+  .row { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">
+    <div class="brand-icon">🌱</div>
+    <div class="brand-name">Agro<span>Sense</span></div>
+  </div>
+  <h2>Create Farmer Account</h2>
+  <p class="sub">Register to start diagnosing your crops with AI</p>
+  <div class="error-msg" id="errMsg"></div>
+  <div class="success-msg" id="okMsg"></div>
+  <div class="row">
+    <div class="form-group">
+      <label>FULL NAME <span class="optional">(optional)</span></label>
+      <input type="text" id="full_name" placeholder="e.g. Ahmed Khan"/>
+    </div>
+    <div class="form-group">
+      <label>USERNAME *</label>
+      <input type="text" id="username" placeholder="e.g. ahmed_farmer"/>
+    </div>
+  </div>
+  <div class="form-group">
+    <label>EMAIL ADDRESS *</label>
+    <input type="email" id="email" placeholder="you@example.com"/>
+  </div>
+  <div class="form-group">
+    <label>PASSWORD * <span class="optional">(min 6 characters)</span></label>
+    <input type="password" id="password" placeholder="Choose a strong password"/>
+  </div>
+  <div class="row">
+    <div class="form-group">
+      <label>PHONE <span class="optional">(optional)</span></label>
+      <input type="text" id="phone" placeholder="03xx-xxxxxxx"/>
+    </div>
+    <div class="form-group">
+      <label>CITY <span class="optional">(optional)</span></label>
+      <input type="text" id="city" placeholder="e.g. Lahore"/>
+    </div>
+  </div>
+  <button class="btn" onclick="doRegister()">Create Account →</button>
+  <div class="footer-link">Already have an account? <a href="/login">Sign In</a></div>
+</div>
+<script>
+async function doRegister() {
+  const err = document.getElementById('errMsg');
+  const ok  = document.getElementById('okMsg');
+  err.classList.remove('show'); ok.classList.remove('show');
+  const data = {
+    username:  document.getElementById('username').value.trim(),
+    email:     document.getElementById('email').value.trim(),
+    password:  document.getElementById('password').value,
+    full_name: document.getElementById('full_name').value.trim(),
+    phone:     document.getElementById('phone').value.trim(),
+    city:      document.getElementById('city').value.trim(),
+  };
+  if (!data.username || !data.email || !data.password) {
+    err.textContent = 'Username, email and password are required.'; err.classList.add('show'); return;
+  }
+  const btn = document.querySelector('.btn');
+  btn.textContent = 'Creating account…'; btn.disabled = true;
+  try {
+    const res  = await fetch('/api/register', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(data) });
+    const resp = await res.json();
+    if (resp.success) {
+      ok.textContent = 'Account created! Redirecting to login…'; ok.classList.add('show');
+      setTimeout(() => window.location.href = '/login', 1500);
+    } else {
+      err.textContent = resp.error || 'Registration failed.'; err.classList.add('show');
+    }
+  } catch(e) { err.textContent = 'Network error.'; err.classList.add('show'); }
+  btn.textContent = 'Create Account →'; btn.disabled = false;
+}
+document.addEventListener('keydown', e => { if(e.key==='Enter') doRegister(); });
+</script>
+</body>
+</html>
